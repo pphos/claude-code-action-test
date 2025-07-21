@@ -34,3 +34,5 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           use_bedrock: "true"
           model: us.anthropic.claude-sonnet-4-20250514-v1:0
+        env:
+          ANTHROPIC_BEDROCK_BASE_URL: "https://bedrock-runtime.us-east-1.amazonaws.com"
