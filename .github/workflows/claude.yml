@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - uses: aws-actions/configure-aws-credentials@v0.0.30
+      - uses: aws-actions/configure-aws-credentials@v0.0.33
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
