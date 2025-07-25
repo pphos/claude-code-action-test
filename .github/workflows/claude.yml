@@ -1,8 +1,8 @@
 name: Claude Assistant
 permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+  contents: read
+  pull-requests: read
+  issues: read
   id-token: write
 on:
   issue_comment:
@@ -19,8 +19,6 @@ jobs:
       (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'pull_request_review_comment' && contains(github.event.comment.body, '@claude')) ||
       (github.event_name == 'issues' && contains(github.event.issue.body, '@claude'))
-    env:
-      ANTHROPIC_BEDROCK_BASE_URL: "https://bedrock-runtime.us-east-1.amazonaws.com"
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -33,6 +31,5 @@ jobs:
           aws-region: us-east-1
       - uses: anthropics/claude-code-action@beta
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
           use_bedrock: "true"
           model: ${{ secrets.AWS_CLAUDE_PROFILE }}
