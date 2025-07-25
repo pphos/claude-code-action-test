@@ -2,7 +2,7 @@ name: Claude Assistant
 permissions:
   contents: write
   pull-requests: read
-  issues: read
+  issues: write
   id-token: write
 on:
   issue_comment:
