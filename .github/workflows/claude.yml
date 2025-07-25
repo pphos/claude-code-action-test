@@ -33,3 +33,4 @@ jobs:
         with:
           use_bedrock: "true"
           model: ${{ secrets.AWS_CLAUDE_PROFILE }}
+          allowed_tools: "Bash"
