@@ -1,6 +1,6 @@
 name: Claude Assistant
 permissions:
-  contents: read
+  contents: write
   pull-requests: read
   issues: read
   id-token: write
