@@ -33,5 +33,15 @@ jobs:
         with:
           use_bedrock: "true"
           model: ${{ secrets.AWS_CLAUDE_PROFILE }}
+          allowed_tools: |
+            Bash(git add:*)
+            Bash(git commit:*)
+            Bash(git push:*)
+            Bash(git status:*)
+            Bash(git diff:*)
+            Bash(git log:*)
+            Bash(git rm:*)
+            Bash(git config user.name:*)
+            Bash(git config user.email:*)
           custom_instructions: |
             全て日本語で回答してください。
