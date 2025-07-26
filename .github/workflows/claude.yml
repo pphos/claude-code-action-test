@@ -32,6 +32,7 @@ jobs:
       - uses: anthropics/claude-code-action@v0.0.33
         with:
           use_bedrock: "true"
-          model: ${{ secrets.AWS_CLAUDE_PROFILE }}
+          #model: ${{ secrets.AWS_CLAUDE_PROFILE }}
+          model: us.anthropic.claude-sonnet-4-20250514-v1:0
           custom_instructions: |
             全て日本語で回答してください。
