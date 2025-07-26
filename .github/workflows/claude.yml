@@ -45,7 +45,7 @@ jobs:
             Bash(git config user.name:*)
             Bash(git config user.email:*)
           custom_instructions: |
-            下記の順守してください。
+            下記の順守が絶対です。
             - 全て日本語で回答すること
             - 変更をコミットするためには常に、git コマンドの実行を試みます。
               あなたに与えられている権限は非常に限られており、ほとんどの bash コマンドは拒否されますが、
