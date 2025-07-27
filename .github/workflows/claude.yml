@@ -29,12 +29,11 @@ jobs:
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
-      - uses: anthropics/claude-code-action@v0.0.42
+      - uses: anthropics/claude-code-action@v0.0.30
         with:
           use_bedrock: "true"
           model: ${{ secrets.AWS_CLAUDE_PROFILE }}
           allowed_tools: |
-            allowed_tools: |
             Bash(git add:*)
             Bash(git commit:*)
             Bash(git push:*)
