@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3バケットテンプレート - 外部公開を禁止'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: S3バケット名（オプション）
+    Default: ''
+
+Conditions:
+  HasBucketName: !Not [!Equals [!Ref BucketName, '']]
+
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !If [HasBucketName, !Ref BucketName, !Ref 'AWS::NoValue']
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      VersioningConfiguration:
+        Status: Enabled
+      NotificationConfiguration:
+        TopicConfigurations: []
+        QueueConfigurations: []
+        LambdaConfigurations: []
+
+  # バケットポリシー - 明示的にパブリックアクセスを拒否
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: DenyPublicReadAcl
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:GetObjectAcl'
+            Resource: !Sub '${S3Bucket}/*'
+            Condition:
+              StringEquals:
+                's3:x-amz-acl': 
+                  - 'public-read'
+                  - 'public-read-write'
+          - Sid: DenyPublicWriteAcl
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:PutObjectAcl'
+            Resource: !Sub '${S3Bucket}/*'
+            Condition:
+              StringEquals:
+                's3:x-amz-acl':
+                  - 'public-read'
+                  - 'public-read-write'
+          - Sid: DenyPublicRead
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:GetObject'
+            Resource: !Sub '${S3Bucket}/*'
+            Condition:
+              StringEquals:
+                'aws:PrincipalServiceName': !Ref 'AWS::NoValue'
+
+Outputs:
+  BucketName:
+    Description: '作成されたS3バケット名'
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketName'
+      
+  BucketArn:
+    Description: 'S3バケットのARN'
+    Value: !GetAtt S3Bucket.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketArn'
+      
+  BucketDomainName:
+    Description: 'S3バケットのドメイン名'
+    Value: !GetAtt S3Bucket.DomainName
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketDomainName'
