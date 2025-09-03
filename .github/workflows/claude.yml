@@ -26,7 +26,7 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
       - uses: anthropics/claude-code-action@v1.0.1
-        timeout-minutes: 1
+        timeout-minutes: 30
         with:
           use_bedrock: "true"
           claude_args: |
