@@ -26,11 +26,12 @@ jobs:
           role-to-assume: ${{ secrets.AWS_ROLE_TO_ASSUME }}
           aws-region: us-east-1
       - uses: anthropics/claude-code-action@v1.0.1
+        timeout-minutes: 1
         with:
           use_bedrock: "true"
           claude_args: |
             --model ${{ secrets.AWS_CLAUDE_PROFILE }}
-            --max-turns 15
+            --max-turns 20
             --system-prompt  |
               全て日本語で回答してください。
               
