@@ -1,0 +1,78 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'S3バケット - 外部公開を禁止'
+
+Parameters:
+  BucketName:
+    Type: String
+    Description: 'S3バケット名（オプション - 未指定の場合は自動生成）'
+    Default: ''
+
+Conditions:
+  HasCustomBucketName: !Not [!Equals [!Ref BucketName, '']]
+
+Resources:
+  # S3バケット
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !If 
+        - HasCustomBucketName
+        - !Ref BucketName
+        - !Ref AWS::NoValue
+      # 外部公開を禁止する設定
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      # バージョニングを有効化（推奨）
+      VersioningConfiguration:
+        Status: Enabled
+      # 暗号化設定（推奨）
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      # ライフサイクル設定（古いバージョンの自動削除）
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteOldVersions
+            Status: Enabled
+            NoncurrentVersionExpirationInDays: 90
+
+  # バケットポリシー（明示的に外部アクセスを拒否）
+  S3BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref S3Bucket
+      PolicyDocument:
+        Statement:
+          - Sid: DenyPublicAccess
+            Effect: Deny
+            Principal: "*"
+            Action: "s3:*"
+            Resource:
+              - !Sub "${S3Bucket}/*"
+              - !Ref S3Bucket
+            Condition:
+              Bool:
+                "aws:SecureTransport": "false"
+
+Outputs:
+  BucketName:
+    Description: '作成されたS3バケット名'
+    Value: !Ref S3Bucket
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketName'
+  
+  BucketArn:
+    Description: 'S3バケットのARN'
+    Value: !GetAtt S3Bucket.Arn
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketArn'
+  
+  BucketDomainName:
+    Description: 'S3バケットのドメイン名'
+    Value: !GetAtt S3Bucket.DomainName
+    Export:
+      Name: !Sub '${AWS::StackName}-BucketDomainName'
